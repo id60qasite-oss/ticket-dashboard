@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket  - ID60 Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .ticket-detail {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .ticket-title {
+            color: #2d3748;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .ticket-status {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-open { background: #fed7d7; color: #c53030; }
+        .status-resolved { background: #c6f6d5; color: #2f855a; }
+        .status-closed { background: #e9d8fd; color: #6b46c1; }
+
+        .ticket-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            color: #718096;
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .description-section {
+            margin-bottom: 30px;
+        }
+
+        .description-title {
+            color: #2d3748;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .description-content {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 1.1em;
+        }
+
+        .actions-section {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .actions-title {
+            color: #2d3748;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .status-update {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-update select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+        }
+
+        .status-update select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .site-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .timestamp {
+            color: #718096;
+            font-size: 0.95em;
+        }
+
+        .back-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #cbd5e0;
+            transform: translateX(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .ticket-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .ticket-info {
+                grid-template-columns: 1fr;
+            }
+
+            .status-update {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .status-update select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 Ticket Details</h1>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/tickets">All Tickets</a>
+            </div>
+        </div>
+
+        <div class="ticket-detail">
+            <a href="/tickets" class="back-btn">
+                ← Back to All Tickets
+            </a>
+
+            <div class="ticket-header">
+                <div class="ticket-title"></div>
+                <div class="ticket-status status-">
+                    
+                </div>
+            </div>
+
+            <div class="ticket-info">
+                <div class="info-item">
+                    <div class="info-label">Site</div>
+                    <div class="info-value">
+                        <span class="site-badge"></span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Created</div>
+                    <div class="info-value timestamp"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Submitted By</div>
+                    <div class="info-value"></div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Current Status</div>
+                    <div class="info-value">
+                        <span class="ticket-status status-">
+                            
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="description-section">
+                <div class="description-title">📝 Description</div>
+                <div class="description-content">
+                    
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <div class="actions-title">⚙️ Actions</div>
+                
+                
+                <div class="status-update">
+                    <label for="status-select">Update Status:</label>
+                    <select id="status-select">
+                        <option value="">Select new status</option>
+                        <option value="Open" disabled>Open</option>
+                        <option value="Resolved" disabled>Resolved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="updateTicketStatus()">Update</button>
+                </div>
+                
+                <div style="color: #718096; font-style: italic; padding: 20px; text-align: center;">
+                    This ticket has been closed and cannot be updated.
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateTicketStatus() {
+            const select = document.getElementById('status-select');
+            const newStatus = select.value;
+            
+            if (!newStatus) {
+                alert('Please select a status');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to update this ticket to ${newStatus}?`)) {
+                fetch('/update_ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        ticket_number: '',
+                        status: newStatus
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to update ticket status');
+                });
+            }
+        }
+    </script>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const ticketId = params.get("ticket");
+const apiUrl = "https://your-n8n-domain/webhook/tickets-json"; // Change this
+
+fetch(apiUrl)
+  .then(res => res.json())
+  .then(data => {
+    const ticket = data.recent_tickets.find(t => t["Ticket Number"] === ticketId);
+    if (!ticket) {
+      document.querySelector(".ticket-detail").innerHTML = "<p>Ticket not found.</p>";
+      return;
+    }
+
+    document.title = "Ticket " + ticket["Ticket Number"] + " - ID60 Dashboard";
+    document.querySelector(".ticket-title").textContent = ticket["Ticket Number"];
+    document.querySelectorAll(".ticket-status").forEach(el => {
+      el.className = "ticket-status status-" + ticket["Status"].toLowerCase();
+      el.textContent = ticket["Status"];
+    });
+    document.querySelector(".site-badge").textContent = ticket["Site"];
+    document.querySelector(".timestamp").textContent = ticket["Timestamp"];
+    document.querySelector(".sender-name").textContent = ticket["Sender"];
+    document.querySelector(".description-content").textContent = ticket["Description"];
+  });
+</script>
+
+</body>
+</html>
