@@ -290,7 +290,7 @@
             <p>Real-time ticket management and reporting system</p>
             <div class="nav-links">
                 <a href="/">Dashboard</a>
-                <a href="/tickets">All Tickets</a>
+                <a href="tickets_converted.html">All Tickets</a>
             </div>
         </div>
 
@@ -319,8 +319,6 @@
                 
                 <div class="tickets-container">
                     
-                        <div id="recent-tickets"></div>
-                    
                 </div>
 
                 <div class="site-stats-section">
@@ -348,7 +346,7 @@
     </script>
 
 <script>
-const apiUrl = "https://a6be2378c920.ngrok-free.app/webhook-test/tickets-json"; // Replace with your actual endpoint
+const apiUrl = "https://your-n8n-domain/webhook/tickets-json"; // Replace with your real n8n webhook
 
 fetch(apiUrl)
   .then(res => res.json())
