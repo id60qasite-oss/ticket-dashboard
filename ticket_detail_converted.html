@@ -395,7 +395,7 @@
 <script>
 const params = new URLSearchParams(window.location.search);
 const ticketId = params.get("ticket");
-const apiUrl = "https://a6be2378c920.ngrok-free.app/webhook-test/tickets-json"; // Change this
+const apiUrl = "https://a6be2378c920.ngrok-free.app/webhook/tickets-json"; // Change this
 
 fetch(apiUrl)
   .then(res => res.json())
