@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ID60 Ticket Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .stat-card.total .stat-number { color: #667eea; }
+        .stat-card.open .stat-number { color: #f56565; }
+        .stat-card.resolved .stat-number { color: #48bb78; }
+        .stat-card.closed .stat-number { color: #9f7aea; }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .recent-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .recent-section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+
+        .tickets-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 30px;
+            padding-right: 10px;
+        }
+
+        .tickets-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tickets-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .tickets-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .tickets-container::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+
+        .ticket-item {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            flex-shrink: 0;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ticket-number {
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+
+        .ticket-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-open { background: #fed7d7; color: #c53030; }
+        .status-resolved { background: #c6f6d5; color: #2f855a; }
+        .status-closed { background: #e9d8fd; color: #6b46c1; }
+
+        .ticket-info {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9em;
+            color: #718096;
+        }
+
+        .site-stats-section {
+            flex-shrink: 0;
+        }
+
+        .site-stats-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .site-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .site-stat {
+            background: #f7fafc;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .site-name {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .site-count {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .no-tickets {
+            text-align: center;
+            color: #718096;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            .ticket-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .ticket-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-number {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 ID60 Ticket Dashboard</h1>
+            <p>Real-time ticket management and reporting system</p>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/tickets">All Tickets</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="stat-number"><span id="total-tickets"></span></div>
+                <div class="stat-label">Total Tickets</div>
+            </div>
+            <div class="stat-card open">
+                <div class="stat-number"><span id="open-tickets"></span></div>
+                <div class="stat-label">Open Tickets</div>
+            </div>
+            <div class="stat-card resolved">
+                <div class="stat-number"><span id="resolved-tickets"></span></div>
+                <div class="stat-label">Resolved Tickets</div>
+            </div>
+            <div class="stat-card closed">
+                <div class="stat-number"><span id="closed-tickets"></span></div>
+                <div class="stat-label">Closed Tickets</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="recent-section">
+                <h2>📈 Recent Activity</h2>
+                
+                <div class="tickets-container">
+                    
+                        <div id="recent-tickets"></div>
+                    
+                </div>
+
+                <div class="site-stats-section">
+                    <h2>🏢 Tickets by Site</h2>
+                    <div class="site-stats">
+                        <div id="site-stats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+
+        // Add some interactivity
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                window.location.href = '/tickets';
+            });
+        });
+    </script>
+
+<script>
+const apiUrl = "https://your-n8n-domain/webhook/tickets-json"; // Replace with your actual endpoint
+
+fetch(apiUrl)
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("total-tickets").textContent = data.total_tickets;
+    document.getElementById("open-tickets").textContent = data.open_tickets;
+    document.getElementById("resolved-tickets").textContent = data.resolved_tickets;
+    document.getElementById("closed-tickets").textContent = data.closed_tickets;
+
+    const ticketsContainer = document.getElementById("recent-tickets");
+    data.recent_tickets.forEach(ticket => {
+      const ticketEl = document.createElement("div");
+      ticketEl.className = "ticket-item";
+      ticketEl.innerHTML = \`
+        <div class="ticket-header">
+          <div class="ticket-number">\${ticket["Ticket Number"]}</div>
+          <div class="ticket-status status-\${ticket["Status"].toLowerCase()}">\${ticket["Status"]}</div>
+        </div>
+        <div class="ticket-info">
+          <span><strong>Site:</strong> \${ticket["Site"]}</span>
+          <span><strong>Time:</strong> \${ticket["Timestamp"]}</span>
+          <span><strong>By:</strong> \${ticket["Sender"]}</span>
+        </div>
+        <div style="margin-top: 10px; color: #4a5568;">
+          \${ticket["Description"].slice(0, 100)}\${ticket["Description"].length > 100 ? "..." : ""}
+        </div>
+      \`;
+      ticketsContainer.appendChild(ticketEl);
+    });
+
+    const siteStatsContainer = document.getElementById("site-stats");
+    for (const site in data.tickets_by_site) {
+      const siteEl = document.createElement("div");
+      siteEl.className = "site-stat";
+      siteEl.innerHTML = \`
+        <div class="site-name">\${site}</div>
+        <div class="site-count">\${data.tickets_by_site[site]}</div>
+      \`;
+      siteStatsContainer.appendChild(siteEl);
+    }
+  });
+</script>
+
+</body>
+</html>
